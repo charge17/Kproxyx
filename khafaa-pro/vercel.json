@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "name": "khafaa-pro",
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "framework": null,
+  "installCommand": "npm install --production",
+  "regions": ["cdg1", "fra1", "iad1"],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" },
+        { "key": "X-Khafaa-Node", "value": "vercel-edge-global" },
+        { "key": "X-No-Log", "value": "true" },
+        { "key": "X-Powered-By", "value": "Khafaa Pro v4.2 – stronger than KProxy" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/manifest.json",
+      "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }]
+    }
+  ],
+  "rewrites": [
+    { "source": "/proxy", "destination": "/app.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/browser", "destination": "/app.html" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 25
+    }
+  },
+  "cleanUrls": true,
+  "trailingSlash": false
+}

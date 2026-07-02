@@ -1,0 +1,5 @@
+/* Khafaa Pro v4.2 – extracted stylesheet – full CSS موجود inline في index.html للتشغيل بملف واحد.
+   هذا الملف للنسخة الـ modular. */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap');
+:root{--bg:#070e1a;--cyan:#00f0ff;--green:#00ffaa;--text:#e6f3ff;--muted:#8aa0bd;--border:rgba(0,240,255,.18)}
+body{font-family:"Cairo",system-ui;background:var(--bg);color:var(--text);margin:0;line-height:1.7;direction:rtl}
