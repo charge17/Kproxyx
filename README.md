@@ -121,6 +121,34 @@ curl -X POST http://localhost:3777/api/v4/fetch \
   -d '{"url":"https://example.com","node":"tn","addons":{"tracker":true}}'
 ```
 
+## 👤 تسجيل المستخدم وإعداد البروكسي الخاص
+
+1) تسجيل مستخدم جديد:
+
+```bash
+curl -X POST http://localhost:3777/api/v4/register -H "Content-Type: application/json" -d '{"username":"alice","password":"secret"}'
+```
+
+2) تسجيل الدخول للحصول على `token`:
+
+```bash
+curl -X POST http://localhost:3777/api/v4/login -H "Content-Type: application/json" -d '{"username":"alice","password":"secret"}'
+# => { "ok": true, "token": "..." }
+```
+
+3) تعيين بروكسي خاص للاستخدام (أنواع: `http`, `https`, `socks5`):
+
+```bash
+curl -X POST http://localhost:3777/api/v4/set-proxy -H "Content-Type: application/json" \
+  -d '{"token":"<TOKEN>", "proxy": {"type":"http","host":"127.0.0.1","port":3128, "tlsSNI":"example.com"}}'
+```
+
+4) عند استدعاء `POST /api/v4/fetch` يمكنك تمرير `token` أو `Authorization: Bearer <TOKEN>` وسيستخدم الخادم إعدادات البروكسي الخاصة بك عند إجراء الطلب.
+
+### ملاحظة عن TLS spoofing
+- يمكن للمستخدم طلب `tlsSNI` (SNI) عند تعيين البروكسي؛ الخادم سيحاول إنشاء وكيل HTTPS مع `servername` مطابق. هذا تصرف "best-effort" وقد لا يعمل مع كل أنواع البروكسي أو في حال استخدام وكيل SOCKS الذي يحكمه البروكسي الوسيط.
+
+
 ---
 
 ## 📦 نشر
@@ -143,3 +171,14 @@ CMD ["node","server.js"]
 MIT – Khafaa Labs Tunis 2026
 
 > KProxy اسم تجاري لطرف ثالث. المقارنة مبنية على مراجعات علنية 2025.
+
+---
+
+## ✅ تحسينات سريعة قمت بها
+
+- إضافة زر تبديل `Dark/Light` وحفظ الاختيار محلياً.
+- تحسين Service Worker لتخزين موارد أساسية (`assets/khafaa.css`, `assets/khafaa.js`) ودعم SPA fallback.
+- تحديث `manifest.json` لإضافة اختصارات PWA للوصول السريع إلى الواجهة ولوحة التحكم.
+- تعرية نسخة التطبيق في `assets/khafaa.js` وتطبيق الثيم المخزن عند التحميل.
+
+إذا رغبت، أُكمل: فصل CSS إلى ملف خارجي كامل، تحسين الوصول (a11y)، أو إضافة اختبارات بسيطة/CI.

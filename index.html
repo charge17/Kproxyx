@@ -21,6 +21,21 @@
   --border:rgba(0,240,255,.18);
   --glow:0 0 24px rgba(0,240,255,.25);
 }
+/* Light theme overrides (minimal, use variables for easy theming) */
+body[data-theme="light"]{
+  --bg:#f6fbff;
+  --bg2:#eef6ff;
+  --card:#ffffff;
+  --cyan:#006a78;
+  --cyan2:#007a8a;
+  --green:#007a44;
+  --purple:#6b21a8;
+  --red:#b31b2b;
+  --text:#042031;
+  --muted:#4a6b7f;
+  --border:rgba(0,122,138,.12);
+  --glow:0 0 14px rgba(0,122,138,.08);
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Segoe UI",Tahoma,"Cairo",system-ui,-apple-system,Arial,sans-serif;background: radial-gradient(1200px 600px at 85% -10%, #0b2a4a44, transparent), radial-gradient(900px 500px at -10% 20%, #5b21b644, transparent), var(--bg); color:var(--text); line-height:1.7; min-height:100vh}
 a{color:var(--cyan);text-decoration:none}
@@ -117,6 +132,7 @@ footer{margin-top:40px;border-top:1px solid #1a3250;padding:28px 0;color:var(--m
 .hr{height:1px;background:#183350;margin:12px 0}
 .tag{font-size:11px;background:#0b2a34;color:#7ff5ff;padding:3px 8px;border-radius:999px;border:1px solid #10606b}
 </style>
+<script src="assets/khafaa.stealth.js"></script>
 </head>
 <body>
 
@@ -137,8 +153,11 @@ footer{margin-top:40px;border-top:1px solid #1a3250;padding:28px 0;color:var(--m
       <a href="#compare">مقارنة</a>
       <a href="#api">API</a>
     </div>
-    <div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost" id="themeToggle" title="تبديل النمط" onclick="toggleTheme()">🌗</button>
+      <span class="small" id="navUserLabel">زائر</span>
       <button class="btn btn-ghost" id="loginBtn">دخول المستخدم</button>
+      <button class="btn btn-ghost" id="logoutBtn" style="display:none" onclick="logoutUser()">خروج</button>
       <button class="btn btn-primary" onclick="document.getElementById('urlBox').focus()">تصفح الآن</button>
     </div>
   </div>
@@ -230,7 +249,8 @@ footer{margin-top:40px;border-top:1px solid #1a3250;padding:28px 0;color:var(--m
         <button class="btn" style="padding:6px 10px" onclick="goBack()">◀</button>
         <button class="btn" style="padding:6px 10px" onclick="goForward()">▶</button>
         <button class="btn" style="padding:6px 10px" onclick="reloadFrame()">⟳</button>
-        <input id="addrBar" placeholder="شريط العنوان المشفّر..." value="khafaa://secure/start">
+          <input id="addrBar" placeholder="شريط العنوان المشفّر..." value="khafaa://secure/start">
+          <button class="btn" id="serverFetchBtn" style="padding:6px 10px;margin-left:6px" onclick="toggleServerFetch()">سيرفر: Off</button>
         <button class="btn" style="padding:6px 10px" onclick="copyCleanLink()">نسخ رابط نظيف</button>
         <button class="btn" style="padding:6px 10px" onclick="wipeSession()">مسح آمن 🧹</button>
         <span class="small">إخفاء قوي نشط</span>
@@ -332,6 +352,45 @@ footer{margin-top:40px;border-top:1px solid #1a3250;padding:28px 0;color:var(--m
 
 <div class="toast" id="toast"></div>
 
+<!-- User Auth Modal -->
+<div class="modal-back" id="userModal">
+  <div class="modal">
+    <h3>👤 حساب خفاء برو</h3>
+    <p class="small">سجل دخولك أو أنشئ حساباً جديداً لحفظ إعدادات البروكسي الخاصة بك واستخدام خادم Khafaa.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <button class="btn btn-primary" onclick="showAuthTab('login')" id="authLoginBtn">تسجيل دخول</button>
+      <button class="btn btn-ghost" onclick="showAuthTab('register')" id="authRegisterBtn">تسجيل جديد</button>
+    </div>
+    <div id="authTabs">
+      <div id="authLogin" style="display:none">
+        <input type="text" id="authUsername" placeholder="اسم المستخدم" style="margin-bottom:8px">
+        <input type="password" id="authPassword" placeholder="كلمة المرور" style="margin-bottom:10px">
+        <button class="btn btn-primary" onclick="loginUser()">دخول</button>
+      </div>
+      <div id="authRegister" style="display:none">
+        <input type="text" id="registerUsername" placeholder="اسم المستخدم" style="margin-bottom:8px">
+        <input type="password" id="registerPassword" placeholder="كلمة المرور" style="margin-bottom:10px">
+        <button class="btn btn-primary" onclick="registerUser()">إنشاء حساب</button>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div id="proxySettings" style="display:none">
+      <p class="small">إعداد البروكسي الخاص</p>
+      <input type="text" id="proxyType" placeholder="نوع البروكسي (http/https/socks5)" style="margin-bottom:8px">
+      <input type="text" id="proxyHost" placeholder="عنوان البروكسي" style="margin-bottom:8px">
+      <input type="number" id="proxyPort" placeholder="المنفذ" style="margin-bottom:8px">
+      <input type="text" id="proxyTlsSni" placeholder="TLS SNI (اختياري)" style="margin-bottom:10px">
+      <button class="btn btn-primary" onclick="saveProxyConfig()">حفظ البروكسي</button>
+    </div>
+    <div class="hr"></div>
+    <div id="authStatus" class="small">غير متصل.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn" onclick="closeUserModal()">إغلاق</button>
+      <button class="btn btn-ghost" onclick="openVault()">فتح الخزنة</button>
+    </div>
+  </div>
+</div>
+
 <!-- Vault Modal -->
 <div class="modal-back" id="vaultModal">
   <div class="modal">
@@ -353,18 +412,25 @@ footer{margin-top:40px;border-top:1px solid #1a3250;padding:28px 0;color:var(--m
 
 <script>
 const NODES = [
-  {id:'tn', name:'تونس', flag:'🇹🇳', ping:18, city:'TN-Stealth'},
-  {id:'fr', name:'فرنسا', flag:'🇫🇷', ping:42, city:'Paris'},
-  {id:'de', name:'ألمانيا', flag:'🇩🇪', ping:48, city:'Frankfurt'},
-  {id:'nl', name:'هولندا', flag:'🇳🇱', ping:51, city:'Amsterdam'},
-  {id:'us_e', name:'أمريكا شرق', flag:'🇺🇸', ping:112, city:'New York'},
-  {id:'us_w', name:'أمريكا غرب', flag:'🇺🇸', ping:156, city:'San Jose'},
-  {id:'ca', name:'كندا', flag:'🇨🇦', ping:118, city:'Toronto'},
-  {id:'sg', name:'سنغافورة', flag:'🇸🇬', ping:188, city:'Singapore'},
-  {id:'jp', name:'اليابان', flag:'🇯🇵', ping:205, city:'Tokyo'},
-  {id:'br', name:'البرازيل', flag:'🇧🇷', ping:172, city:'São Paulo'},
-  {id:'ae', name:'الإمارات', flag:'🇦🇪', ping:76, city:'Dubai'},
-  {id:'tr', name:'تركيا', flag:'🇹🇷', ping:58, city:'Istanbul'},
+  {id:'tn', name:'تونس', flag:'🇹🇳', ping:18, city:'TN-Stealth', timezone:'Africa/Tunis', locales:['ar-TN','ar'], ua:[
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.96 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/115.0',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
+  ], platform:'Win32', hw:4, dm:4, screen:{width:1366,height:768,colorDepth:24}},
+  {id:'fr', name:'فرنسا', flag:'🇫🇷', ping:42, city:'Paris', timezone:'Europe/Paris', locales:['fr-FR','fr'], ua:[
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15'
+  ], platform:'MacIntel', hw:8, dm:8, screen:{width:1440,height:900,colorDepth:24}},
+  {id:'de', name:'ألمانيا', flag:'🇩🇪', ping:48, city:'Frankfurt', timezone:'Europe/Berlin', locales:['de-DE','de'], ua:['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/117.0.0.0 Safari/537.36'], platform:'Win32', hw:8, dm:8, screen:{width:1920,height:1080,colorDepth:24}},
+  {id:'nl', name:'هولندا', flag:'🇳🇱', ping:51, city:'Amsterdam', timezone:'Europe/Amsterdam', locales:['nl-NL','nl'], ua:['Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/117.0'], platform:'Linux x86_64', hw:8, dm:8, screen:{width:1920,height:1080,colorDepth:24}},
+  {id:'us_e', name:'أمريكا شرق', flag:'🇺🇸', ping:112, city:'New York', timezone:'America/New_York', locales:['en-US'], ua:['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/116.0.5845.96 Safari/537.36'], platform:'Win32', hw:8, dm:8, screen:{width:1920,height:1080,colorDepth:24}},
+  {id:'us_w', name:'أمريكا غرب', flag:'🇺🇸', ping:156, city:'San Jose', timezone:'America/Los_Angeles', locales:['en-US'], ua:['Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/605.1.15 Version/16.6 Safari/605.1.15'], platform:'MacIntel', hw:8, dm:8, screen:{width:1440,height:900,colorDepth:24}},
+  {id:'ca', name:'كندا', flag:'🇨🇦', ping:118, city:'Toronto', timezone:'America/Toronto', locales:['en-CA','fr-CA'], ua:['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/116.0.5845.96 Safari/537.36'], platform:'Win32', hw:8, dm:8, screen:{width:1920,height:1080,colorDepth:24}},
+  {id:'sg', name:'سنغافورة', flag:'🇸🇬', ping:188, city:'Singapore', timezone:'Asia/Singapore', locales:['en-SG','zh-SG'], ua:['Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 Chrome/116.0.5845.96 Mobile Safari/537.36'], platform:'Linux armv8l', hw:8, dm:8, screen:{width:1080,height:2400,colorDepth:24}},
+  {id:'jp', name:'اليابان', flag:'🇯🇵', ping:205, city:'Tokyo', timezone:'Asia/Tokyo', locales:['ja-JP','en-JP'], ua:['Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 Chrome/116.0.5845.96 Mobile Safari/537.36'], platform:'Linux armv8l', hw:8, dm:8, screen:{width:1080,height:2340,colorDepth:24}},
+  {id:'br', name:'البرازيل', flag:'🇧🇷', ping:172, city:'São Paulo', timezone:'America/Sao_Paulo', locales:['pt-BR'], ua:['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/116.0.0.0 Safari/537.36'], platform:'Win32', hw:8, dm:8, screen:{width:1366,height:768,colorDepth:24}},
+  {id:'ae', name:'الإمارات', flag:'🇦🇪', ping:76, city:'Dubai', timezone:'Asia/Dubai', locales:['ar-AE','en-AE'], ua:['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/116.0.0.0 Safari/537.36'], platform:'Win32', hw:8, dm:8, screen:{width:1366,height:768,colorDepth:24}},
+  {id:'tr', name:'تركيا', flag:'🇹🇷', ping:58, city:'Istanbul', timezone:'Europe/Istanbul', locales:['tr-TR','en-TR'], ua:['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/116.0.0.0 Safari/537.36'], platform:'Win32', hw:8, dm:8, screen:{width:1366,height:768,colorDepth:24}},
 ];
 let activeNode = NODES[0];
 let mode='stealth';
@@ -401,6 +467,10 @@ document.querySelectorAll('.toggle').forEach(t=>{
     t.classList.toggle('on');
     const key=t.dataset.key;
     showToast((t.classList.contains('on')?'✅ تفعيل ':'⏸️ إيقاف ') + key);
+    if(key==='rotate'){
+      if(t.classList.contains('on')) startAutoRotate(90);
+      else stopAutoRotate();
+    }
   });
 });
 
@@ -409,6 +479,12 @@ function getAddons(){
   document.querySelectorAll('.toggle').forEach(t=> o[t.dataset.key]=t.classList.contains('on'));
   return o;
 }
+
+// Server fetch toggle (use server-side /api/v4/fetch)
+let serverFetch = (localStorage.getItem('khafaa_server_fetch')==='true');
+function applyServerFetchUI(){ const b=document.getElementById('serverFetchBtn'); if(!b) return; b.textContent = 'سيرفر: ' + (serverFetch? 'On':'Off'); }
+function toggleServerFetch(){ serverFetch = !serverFetch; localStorage.setItem('khafaa_server_fetch', serverFetch?'true':'false'); applyServerFetchUI(); showToast(serverFetch? 'استخدام خادم Khafaa':'استخدام الجلب المحلي'); }
+applyServerFetchUI();
 
 const PROXY_GATEWAYS = [
   u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
@@ -430,11 +506,27 @@ async function launchProxy(){
 
   const addons = getAddons();
   let html=null, usedGateway='';
-  for(const gw of PROXY_GATEWAYS){
+
+  // if serverFetch is enabled, call our server-side fetch API (uses token and user proxy settings)
+  if(serverFetch){
     try{
-      const res = await fetch(gw(raw), {cache:'no-store'});
-      if(res.ok){ html = await res.text(); usedGateway=gw.name; break;}
-    }catch(e){}
+      const token = localStorage.getItem('khafaa_token');
+      const body = { url: raw, node: activeNode.id, addons };
+      const headers = {'Content-Type':'application/json'};
+      if(token) headers['Authorization'] = 'Bearer '+token;
+      const resp = await fetch('/api/v4/fetch', { method:'POST', headers, body: JSON.stringify(body) });
+      if(resp.ok){
+        const data = await resp.json();
+        if(data && data.html){ html = data.html; }
+      }
+    }catch(e){ console.warn('serverFetch err',e); }
+  } else {
+    for(const gw of PROXY_GATEWAYS){
+      try{
+        const res = await fetch(gw(raw), {cache:'no-store'});
+        if(res.ok){ html = await res.text(); usedGateway=gw.name; break;}
+      }catch(e){}
+    }
   }
   if(!html){
     loader.classList.remove('show');
@@ -444,33 +536,15 @@ async function launchProxy(){
     return;
   }
 
-  // stealth inject
-  const stealthScript = `
-<script>
-(function(){
-  try{
-    // Anti-fingerprint
-    const addNoise = ()=> (Math.random()*0.0002 - 0.0001);
-    try{
-      const getImageData = CanvasRenderingContext2D.prototype.getImageData;
-      CanvasRenderingContext2D.prototype.getImageData = function(){ const d=getImageData.apply(this,arguments); for(let i=0;i<d.data.length;i+=4){ d.data[i]+=addNoise()*255|0 } return d;}
-    }catch(e){}
-    // WebRTC block
-    try{ if(navigator.mediaDevices){ navigator.mediaDevices.getUserMedia = ()=>Promise.reject(new Error('blocked')) } }catch(e){}
-    // hide webdriver
-    Object.defineProperty(navigator, 'webdriver', {get:()=>false});
-    ${addons.ua ? `Object.defineProperty(navigator,'userAgent',{get:()=>'Mozilla/5.0 (X11; KhafaaOS) AppleWebKit/537.36 KhafaaPro/4.2' })` : ''}
-    // TrackerKill
-    ${addons.tracker ? `
-    const blockList = ['google-analytics','facebook.net','doubleclick','hotjar','mixpanel'];
-    const origFetch = window.fetch; window.fetch = function(u,...r){ if(blockList.some(b=>String(u).includes(b))) return Promise.resolve(new Response('', {status:204})); return origFetch(u,...r); };
-    ` : ''}
-    // AdBlock cosmetic
-    ${addons.adblock ? `document.addEventListener('DOMContentLoaded',()=>{ ['.ad','[id*="ad"]','iframe[src*="ads"]'].forEach(s=>document.querySelectorAll(s).forEach(el=>el.remove())); });` : ''}
-    console.log('%cKhafaa Pro Stealth Active','color:#00ffcc');
-  }catch(e){}
-})();
-<\/script>`;
+  // build stealthScript using external builder when available (fallback otherwise)
+  let stealthScript = '';
+  if(window.buildStealthScript && typeof window.buildStealthScript === 'function'){
+    try{ stealthScript = window.buildStealthScript(addons, activeNode, mode); }catch(e){ stealthScript = '' }
+  }
+  if(!stealthScript){
+    // fallback minimal injection
+    stealthScript = `<script>(function(){try{Object.defineProperty(navigator,'webdriver',{get:()=>false});if(navigator.mediaDevices)navigator.mediaDevices.getUserMedia=()=>Promise.reject(new Error('blocked'));const g=CanvasRenderingContext2D.prototype.getImageData;CanvasRenderingContext2D.prototype.getImageData=function(){const d=g.apply(this,arguments);for(let i=0;i<d.data.length;i+=7)d.data[i]^=1;return d;} }catch(e){} })()<\/script>`;
+  }
   // inject base + stealth
   let out = html;
   if(!/<base/i.test(out)) out = out.replace(/<head[^>]*>/i, m=> m + `<base href="${raw}">`);
@@ -498,6 +572,21 @@ function navHistory(){ const u=historyStack[historyIndex]; document.getElementBy
 function reloadFrame(){ launchProxy(); }
 function copyCleanLink(){ const u=document.getElementById('addrBar').value; navigator.clipboard.writeText(u).then(()=>showToast('تم نسخ الرابط النظيف')); }
 function wipeSession(){ document.getElementById('proxyFrame').srcdoc='<div style="background:#020811;color:#aeeaff;font-family:sans-serif;padding:40px;text-align:center;direction:rtl"><h2>🧹 تم المسح الآمن</h2><p>تم حذف الكوكيز، التخزين، وبصمة الجلسة.</p></div>'; showToast('تم المسح الآمن – Zero-Trace'); sessionCount=0; document.getElementById('sessCount').textContent='جلسات: 0'; }
+
+// Auto-rotate node
+let _autoRotateId = null;
+function startAutoRotate(sec){ stopAutoRotate();
+  _autoRotateId = setInterval(()=>{
+    const others = NODES.filter(n=>n.id!==activeNode.id);
+    if(!others.length) return;
+    const pick = others[Math.floor(Math.random()*others.length)];
+    selectNode(pick.id);
+    // reload current page through new node
+    try{ launchProxy(); }catch(e){}
+  }, (sec||90)*1000);
+  showToast('🔁 تدوير العقدة تلقائيًا مفعل كل '+(sec||90)+' ثانية');
+}
+function stopAutoRotate(){ if(_autoRotateId){ clearInterval(_autoRotateId); _autoRotateId=null; showToast('⏹️ تم إيقاف تدوير العقدة'); } }
 
 let toastTimer;
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), 3200); }
@@ -572,7 +661,141 @@ async function exportVault(){
 }
 
 // login mock
-document.getElementById('loginBtn').addEventListener('click', openVault);
+document.getElementById('loginBtn').addEventListener('click', openUserModal);
+
+function openUserModal(){
+  document.getElementById('userModal').classList.add('open');
+  showAuthTab('login');
+  refreshAuthStatus();
+}
+function closeUserModal(){
+  document.getElementById('userModal').classList.remove('open');
+}
+function showAuthTab(tab){
+  document.getElementById('authLogin').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('authRegister').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authLoginBtn').classList.toggle('btn-primary', tab==='login');
+  document.getElementById('authRegisterBtn').classList.toggle('btn-primary', tab==='register');
+  document.getElementById('authRegisterBtn').classList.toggle('btn-ghost', tab!=='register');
+  document.getElementById('authLoginBtn').classList.toggle('btn-ghost', tab!=='login');
+}
+
+async function registerUser(){
+  const username = document.getElementById('registerUsername').value.trim();
+  const password = document.getElementById('registerPassword').value.trim();
+  if(!username || !password){ showToast('أدخل اسم مستخدم وكلمة مرور'); return; }
+  try{
+    const r = await fetch('/api/v4/register', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username,password})
+    });
+    const data = await r.json();
+    if(r.ok){ showToast('تم إنشاء الحساب'); document.getElementById('authUsername').value = username; document.getElementById('authPassword').value = password; showAuthTab('login'); }
+    else showToast(data.error || 'فشل التسجيل');
+  }catch(e){ showToast('خطأ في التسجيل'); }
+}
+
+async function loginUser(){
+  const username = document.getElementById('authUsername').value.trim();
+  const password = document.getElementById('authPassword').value.trim();
+  if(!username || !password){ showToast('أدخل اسم مستخدم وكلمة مرور'); return; }
+  try{
+    const r = await fetch('/api/v4/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username,password})
+    });
+    const data = await r.json();
+    if(r.ok && data.token){
+      localStorage.setItem('khafaa_token', data.token);
+      localStorage.setItem('khafaa_user', data.username);
+      showToast('تم تسجيل الدخول');
+      refreshAuthStatus();
+      closeUserModal();
+    } else {
+      showToast(data.error || 'فشل تسجيل الدخول');
+    }
+  }catch(e){ showToast('خطأ في تسجيل الدخول'); }
+}
+
+async function loadProfile(){
+  const token = localStorage.getItem('khafaa_token');
+  if(!token) return refreshAuthStatus();
+  try{
+    const resp = await fetch('/api/v4/me', {
+      headers: { Authorization: 'Bearer '+token }
+    });
+    if(resp.ok){
+      const data = await resp.json();
+      if(data && data.username){
+        localStorage.setItem('khafaa_user', data.username);
+        refreshAuthStatus();
+        if(data.proxy){
+          document.getElementById('proxyType').value = data.proxy.type || '';
+          document.getElementById('proxyHost').value = data.proxy.host || '';
+          document.getElementById('proxyPort').value = data.proxy.port || '';
+          document.getElementById('proxyTlsSni').value = data.proxy.tlsSNI || '';
+        }
+      }
+    } else {
+      localStorage.removeItem('khafaa_token');
+      localStorage.removeItem('khafaa_user');
+      refreshAuthStatus();
+    }
+  }catch(e){ console.warn('profile load err', e); refreshAuthStatus(); }
+}
+
+async function saveProxyConfig(){
+  const token = localStorage.getItem('khafaa_token');
+  if(!token){ showToast('سجّل دخول أولاً'); return; }
+  const proxy = {
+    type: document.getElementById('proxyType').value.trim(),
+    host: document.getElementById('proxyHost').value.trim(),
+    port: Number(document.getElementById('proxyPort').value),
+    tlsSNI: document.getElementById('proxyTlsSni').value.trim() || undefined
+  };
+  if(!proxy.type || !proxy.host || !proxy.port){ showToast('أكمل إعدادات البروكسي'); return; }
+  try{
+    const r = await fetch('/api/v4/set-proxy', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({token,proxy})
+    });
+    const data = await r.json();
+    if(r.ok){ showToast('تم حفظ إعداد البروكسي'); }
+    else showToast(data.error || 'فشل حفظ البروكسي');
+  }catch(e){ showToast('خطأ في حفظ البروكسي'); }
+}
+
+function refreshAuthStatus(){
+  const token = localStorage.getItem('khafaa_token');
+  const user = localStorage.getItem('khafaa_user');
+  const status = document.getElementById('authStatus');
+  const proxySettings = document.getElementById('proxySettings');
+  const navUserLabel = document.getElementById('navUserLabel');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if(token && user){
+    status.textContent = 'مسجّل كـ ' + user;
+    proxySettings.style.display = 'block';
+    navUserLabel.textContent = user;
+    logoutBtn.style.display = 'inline-flex';
+    document.getElementById('userLabel').textContent = user;
+  } else {
+    status.textContent = 'غير متصل.';
+    proxySettings.style.display = 'none';
+    navUserLabel.textContent = 'زائر';
+    logoutBtn.style.display = 'none';
+    document.getElementById('userLabel').textContent = 'زائر';
+  }
+}
+
+function logoutUser(){
+  localStorage.removeItem('khafaa_token');
+  localStorage.removeItem('khafaa_user');
+  showToast('تم تسجيل الخروج');
+  refreshAuthStatus();
+}
+
+// login mock
+document.getElementById('loginBtn').addEventListener('click', openUserModal);
 
 // keyboard
 document.addEventListener('keydown', e=>{
@@ -580,7 +803,23 @@ document.addEventListener('keydown', e=>{
 });
 
 // auto init
-window.addEventListener('load', ()=>{
+// Theme helpers
+function applyTheme(theme){
+  if(theme==='light'){
+    document.body.setAttribute('data-theme','light');
+    const btn=document.getElementById('themeToggle'); if(btn) btn.textContent='🌙';
+  } else {
+    document.body.removeAttribute('data-theme');
+    const btn=document.getElementById('themeToggle'); if(btn) btn.textContent='🌗';
+  }
+  try{ localStorage.setItem('khafaa_theme', theme); }catch(e){}
+}
+function toggleTheme(){ const cur = (localStorage.getItem('khafaa_theme')==='light') ? 'dark' : 'light'; applyTheme(cur); showToast(cur==='light' ? '🔆 وضع فاتح' : '🌙 وضع داكن'); }
+
+window.addEventListener('load', async ()=>{
+  const initial = localStorage.getItem('khafaa_theme') || 'dark'; applyTheme(initial);
+  refreshAuthStatus();
+  await loadProfile();
   showToast('مرحباً بك في خفاء برو – أقوى من KProxy، خصوصية حقيقية');
 });
 </script>

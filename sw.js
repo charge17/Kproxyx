@@ -6,7 +6,9 @@ const CORE = [
   './app.html',
   './dashboard.html',
   './manifest.json',
-  './logo.png'
+  './logo.png',
+  './assets/khafaa.css',
+  './assets/khafaa.js'
 ];
 
 self.addEventListener('install', e => {
@@ -19,13 +21,18 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // never cache proxy fetches
-  if(url.pathname.includes('/api/') || url.search.includes('url=')) return;
+  // never cache proxy fetches or API calls
+  if(url.pathname.includes('/api/') || url.search.includes('url=') ) return;
+  // navigation requests -> SPA fallback
+  if(e.request.mode === 'navigate'){
+    e.respondWith(caches.match('./index.html').then(r=> r || fetch(e.request).catch(()=> caches.match('./index.html'))));
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request).then(resp=>{
-      if(resp.ok && e.request.method==='GET'){
+      if(resp && resp.ok && e.request.method==='GET'){
         const clone = resp.clone();
-        caches.open(CACHE).then(c=>c.put(e.request, clone));
+        caches.open(CACHE).then(c=> c.put(e.request, clone).catch(()=>{}));
       }
       return resp;
     }).catch(()=> caches.match('./index.html')))

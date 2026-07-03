@@ -8,6 +8,10 @@
   "theme_color": "#00f0ff",
   "dir": "rtl",
   "lang": "ar",
+  "shortcuts": [
+    { "name": "تصفح الآن", "short_name": "تصفح", "description": "افتح واجهة التصفح المخفي", "url": "/index.html#proxy", "icons": [{ "src": "logo.png", "sizes": "192x192" }] },
+    { "name": "لوحة التحكم", "short_name": "لوحة", "description": "افتح لوحة التحكم", "url": "/dashboard.html", "icons": [{ "src": "logo.png", "sizes": "192x192" }] }
+  ],
   "icons": [
     {
       "src": "logo.png",

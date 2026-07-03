@@ -38,7 +38,16 @@ async function run(url){
   let html=null;
   for(const g of gates){ try{ const r=await fetch(g(url)); if(r.ok){html=await r.text();break;} }catch(e){} }
   if(!html){ document.getElementById('f').srcdoc='<div style="padding:40px;color:#000;font-family:sans-serif;direction:rtl">تعذر الجلب – جرب رابط آخر</div>'; return;}
-  const stealth=`<script>(function(){try{Object.defineProperty(navigator,'webdriver',{get:()=>false});const o=CanvasRenderingContext2D.prototype.getImageData;CanvasRenderingContext2D.prototype.getImageData=function(){const d=o.apply(this,arguments);for(let i=0;i<d.data.length;i+=7)d.data[i]^=1;return d;};if(navigator.mediaDevices){navigator.mediaDevices.getUserMedia=()=>Promise.reject()}}catch(e){}})()<\/script>`;
+  const stealth=`<script>(function(){try{const UAs=[
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/116.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/115.0',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 Version/16.4 Mobile/15E148 Safari/604.1'
+  ]; const pick = UAs[Math.floor(Math.random()*UAs.length)];
+  try{ Object.defineProperty(navigator,'webdriver',{get:()=>false}); Object.defineProperty(navigator,'userAgent',{get:()=>pick}); }catch(e){}
+  try{ const o=CanvasRenderingContext2D.prototype.getImageData; CanvasRenderingContext2D.prototype.getImageData=function(){const d=o.apply(this,arguments); for(let i=0;i<d.data.length;i+=7) d.data[i]^=1; return d; }; }catch(e){}
+  try{ if(navigator.mediaDevices) navigator.mediaDevices.getUserMedia = ()=>Promise.reject(new Error('blocked')); }catch(e){}
+  try{ if(window.RTCPeerConnection){ const Orig=window.RTCPeerConnection; window.RTCPeerConnection=function(){ return new Orig(...arguments); }; } }catch(e){}
+}catch(e){} })()<\/script>`;
   if(!/<base/i.test(html)) html=html.replace(/<head[^>]*>/i,m=>m+'<base href="'+url+'">');
   html=html.replace(/<\/head>/i,stealth+'</head>');
   html=html.replace(/<body[^>]*>/i,m=>m+'<div style="position:fixed;top:0;left:0;right:0;background:#001d28ee;color:#9effff;padding:6px 10px;font:12px system-ui;z-index:99999;text-align:center">🛡️ Khafaa Pro • AES-256 • '+url+'</div><div style="height:30px"></div>');
