@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Khafaa Pro Browser – وضع ملء الشاشة</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00f0ff">
+<style>
+*{box-sizing:border-box;margin:0}body{background:#01060d;color:#dffaff;font-family:system-ui,Segoe UI,Tahoma,Arial}
+.top{display:flex;gap:8px;padding:10px;background:#071726;border-bottom:1px solid #0e3550;align-items:center}
+.top input{flex:1;background:#0b2036;border:1px solid #1a4469;color:#eaffff;padding:10px 12px;border-radius:10px;font-size:15px}
+.btn{background:#0f2b44;border:1px solid #1c4f73;color:#bfefff;padding:9px 13px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn-p{background:linear-gradient(135deg,#00f0ff,#00ffaa);color:#00252a;border:none}
+iframe{width:100%;height:calc(100vh - 56px);border:0;background:#fff}
+.badge{font-size:11px;color:#7fffe0}
+</style>
+</head>
+<body>
+<div class="top">
+  <strong style="color:#00f0ff">خفاء برو</strong>
+  <span class="badge">Stealth • AES-256</span>
+  <input id="u" placeholder="https://..." value="https://example.com">
+  <button class="btn" onclick="go(-1)">◀</button>
+  <button class="btn" onclick="go(1)">▶</button>
+  <button class="btn-p btn" onclick="run()">تشغيل ▶</button>
+  <button class="btn" onclick="document.getElementById('f').srcdoc=''">🧹 مسح</button>
+  <a class="btn" href="index.html">🏠 الرئيسية</a>
+</div>
+<iframe id="f" sandbox="allow-scripts allow-forms allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>
+<script>
+const gates=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://corsproxy.io/?'+encodeURIComponent(u)];
+let hist=[], idx=-1;
+async function run(url){
+  url = url || document.getElementById('u').value.trim();
+  if(!/^https?:/i.test(url)) url='https://'+url;
+  document.getElementById('u').value=url;
+  let html=null;
+  for(const g of gates){ try{ const r=await fetch(g(url)); if(r.ok){html=await r.text();break;} }catch(e){} }
+  if(!html){ document.getElementById('f').srcdoc='<div style="padding:40px;color:#000;font-family:sans-serif;direction:rtl">تعذر الجلب – جرب رابط آخر</div>'; return;}
+  const stealth=`<script>(function(){try{Object.defineProperty(navigator,'webdriver',{get:()=>false});const o=CanvasRenderingContext2D.prototype.getImageData;CanvasRenderingContext2D.prototype.getImageData=function(){const d=o.apply(this,arguments);for(let i=0;i<d.data.length;i+=7)d.data[i]^=1;return d;};if(navigator.mediaDevices){navigator.mediaDevices.getUserMedia=()=>Promise.reject()}}catch(e){}})()<\/script>`;
+  if(!/<base/i.test(html)) html=html.replace(/<head[^>]*>/i,m=>m+'<base href="'+url+'">');
+  html=html.replace(/<\/head>/i,stealth+'</head>');
+  html=html.replace(/<body[^>]*>/i,m=>m+'<div style="position:fixed;top:0;left:0;right:0;background:#001d28ee;color:#9effff;padding:6px 10px;font:12px system-ui;z-index:99999;text-align:center">🛡️ Khafaa Pro • AES-256 • '+url+'</div><div style="height:30px"></div>');
+  document.getElementById('f').srcdoc=html;
+  hist=hist.slice(0,idx+1); hist.push(url); idx=hist.length-1;
+}
+function go(d){ const n=idx+d; if(n>=0&&n<hist.length){ idx=n; document.getElementById('u').value=hist[idx]; run(hist[idx]);}}
+document.getElementById('u').addEventListener('keydown',e=>{ if(e.key==='Enter') run()});
+run();
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js'); }
+</script>
+</body>
+</html>

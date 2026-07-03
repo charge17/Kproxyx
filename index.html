@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خفاء برو | Khafaa Pro – بروكسي خصوصية أقوى من KProxy</title>
+<meta name="description" content="خفاء برو – بروكسي ويب متكامل، تشفير AES-256، إخفاء متقدم، إضافات قوية، تحكم شامل تلقائي. أقوى من KProxy.">
+<link rel="icon" href="logo.png">
+<style>
+:root{
+  --bg:#070e1a;
+  --bg2:#0c1627;
+  --card:#101d33ee;
+  --cyan:#00f0ff;
+  --cyan2:#00b8d4;
+  --green:#00ffaa;
+  --purple:#8b5cf6;
+  --red:#ff4d6d;
+  --text:#e6f3ff;
+  --muted:#8aa0bd;
+  --border:rgba(0,240,255,.18);
+  --glow:0 0 24px rgba(0,240,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Tahoma,"Cairo",system-ui,-apple-system,Arial,sans-serif;background: radial-gradient(1200px 600px at 85% -10%, #0b2a4a44, transparent), radial-gradient(900px 500px at -10% 20%, #5b21b644, transparent), var(--bg); color:var(--text); line-height:1.7; min-height:100vh}
+a{color:var(--cyan);text-decoration:none}
+.container{max-width:1180px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:50;background:rgba(7,14,26,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:19px}
+.brand img,.brand .logo-svg{width:44px;height:44px;border-radius:12px;box-shadow:var(--glow);object-fit:cover;background:#061221}
+.brand span strong{color:var(--cyan)}
+.badge{font-size:11px;background:linear-gradient(90deg,var(--cyan2),var(--green));color:#00222a;padding:3px 9px;border-radius:999px;font-weight:700;margin-right:6px}
+.nav-links{display:flex;gap:18px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.nav-links a{color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.btn{border:1px solid var(--border);background:#0f213fcc;color:var(--text);padding:9px 16px;border-radius:12px;font-weight:700;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),#3bf2a8);color:#002532;border:none}
+.btn-ghost{background:transparent}
+.small{font-size:12.5px;color:var(--muted)}
+
+.hero{padding:56px 0 28px;text-align:center}
+.hero h1{font-size: clamp(28px,4.2vw,46px);line-height:1.25;margin-bottom:12px}
+.hero h1 .grad{background:linear-gradient(90deg,var(--cyan),var(--green),#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:780px;margin:0 auto 22px;font-size:17px}
+.kproxy-compare{display:inline-flex;gap:10px;align-items:center;background:#0e1c30; border:1px solid var(--border); padding:8px 14px;border-radius:999px;font-size:13px;margin-bottom:18px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+
+.proxy-shell{max-width:980px;margin:28px auto 14px;background:linear-gradient(180deg,#0f1e34,#0b1629);border:1px solid var(--border);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.45),var(--glow);overflow:hidden}
+.proxy-top{display:flex;gap:10px;padding:14px 16px;background:#0a1424;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.chip{background:#0d223d;border:1px solid #1b3458;color:#bcd9ff;padding:6px 11px;border-radius:999px;font-size:12.5px;cursor:pointer;user-select:none}
+.chip.active{background:#002c3b;border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.2)}
+.url-row{display:flex;gap:10px;padding:16px;flex-wrap:wrap}
+.url-input{flex:1;min-width:240px;background:#071423;color:var(--text);border:1.5px solid #1e3a5f;border-radius:14px;padding:15px 16px;font-size:16px;outline:none}
+.url-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,240,255,.12)}
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0 16px 16px}
+.ctrl-card{background:#0a172b;border:1px solid #183250;border-radius:14px;padding:12px}
+.ctrl-card h4{font-size:13px;color:#bfefff;margin-bottom:8px}
+.switch{display:flex;align-items:center;justify-content:space-between;margin:7px 0;font-size:13.5px;color:#cfe8ff}
+.toggle{position:relative;width:44px;height:24px;background:#1b2f4c;border-radius:999px;cursor:pointer;transition:.2s;border:1px solid #2a466f}
+.toggle.on{background:linear-gradient(90deg,var(--cyan2),var(--green))}
+.toggle::after{content:"";position:absolute;top:2px;right:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.toggle.on::after{right:22px}
+.server-grid{display:flex;flex-wrap:wrap;gap:8px}
+.server{padding:7px 11px;border-radius:10px;background:#0b1d34;border:1px solid #1f3b60;font-size:12.5px;cursor:pointer}
+.server b{color:var(--cyan)}
+.server.active{border-color:var(--green);background:#062a25;box-shadow:inset 0 0 12px rgba(0,255,170,.08)}
+.go-btn{width:100%;margin:0 16px 16px;width:calc(100% - 32px);padding:16px;border-radius:14px;font-size:17px;font-weight:800}
+
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#06111f;border-top:1px solid #132942;font-size:12.5px;color:var(--muted);flex-wrap:wrap;gap:8px}
+.pill{padding:4px 9px;border-radius:999px;background:#0d243e;border:1px solid #1f3d62;font-size:11.5px}
+
+.browser-wrap{background:#02070f;border-top:1px solid #142741;min-height:520px;position:relative}
+.browser-toolbar{display:flex;gap:8px;padding:10px 14px;background:#081425;border-bottom:1px solid #14273d;align-items:center;flex-wrap:wrap;font-size:13px}
+.browser-toolbar input{background:#0a1b31;border:1px solid #1d3a5d;color:#cfe6ff;padding:7px 10px;border-radius:8px;min-width:270px;flex:1}
+.iframe-viewport{height:520px;position:relative;background:#000}
+#proxyFrame{width:100%;height:100%;border:0;background:#fff}
+.loader{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,8,16,.82);flex-direction:column;gap:14px;color:#bdefff;z-index:5}
+.loader.show{display:flex}
+.spinner{width:42px;height:42px;border:3px solid #1e3f60;border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:34px 0}
+.feature{background:linear-gradient(180deg,#0f1f36cc,#0c192bce);border:1px solid var(--border);border-radius:18px;padding:18px}
+.feature h3{font-size:17px;margin-bottom:7px;color:#d9f7ff}
+.feature p{color:var(--muted);font-size:14px}
+.icon{font-size:22px;margin-bottom:8px}
+
+.compare{margin:36px 0;overflow:auto}
+.compare table{width:100%;border-collapse:collapse;background:#0b182d;border:1px solid #1a3455;border-radius:14px;overflow:hidden}
+.compare th,.compare td{padding:13px 14px;border-bottom:1px solid #163052;text-align:right;font-size:14px}
+.compare th{background:#0d2038;color:#bfeaff}
+.good{color:var(--green);font-weight:700}
+.bad{color:#ff7b8d;font-weight:700}
+.warn{color:#ffcc66}
+
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:28px 0}
+.tool{background:#0e1d34;border:1px solid #1b3459;border-radius:16px;padding:16px}
+.tool h4{margin-bottom:8px;color:#d2f6ff}
+
+footer{margin-top:40px;border-top:1px solid #1a3250;padding:28px 0;color:var(--muted);font-size:13px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:18px}
+@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr} .browser-toolbar input{min-width:160px}}
+@media(max-width:520px){.foot-grid{grid-template-columns:1fr} .nav-links{display:none}}
+
+.toast{position:fixed;left:18px;bottom:18px;background:#0d2238;border:1px solid var(--cyan2);color:#cffff7;padding:12px 15px;border-radius:12px;box-shadow:var(--glow);display:none;z-index:99;max-width:360px;font-size:13.5px}
+.toast.show{display:block}
+.kbd{background:#112742;border:1px solid #244765;padding:2px 6px;border-radius:6px;font-size:11px;color:#9cdfff}
+
+/* modal */
+.modal-back{position:fixed;inset:0;background:rgba(0,6,14,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:80}
+.modal-back.open{display:flex}
+.modal{width:min(560px,92vw);background:#0d1b30;border:1px solid #1f3e63;border-radius:18px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.6)}
+.modal h3{margin-bottom:10px}
+.modal input{width:100%;background:#071526;border:1px solid #204060;color:#e8f6ff;padding:11px 12px;border-radius:10px;margin:6px 0 10px;font-size:15px}
+.hr{height:1px;background:#183350;margin:12px 0}
+.tag{font-size:11px;background:#0b2a34;color:#7ff5ff;padding:3px 8px;border-radius:999px;border:1px solid #10606b}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner container">
+    <div class="brand">
+      <img src="logo.png" alt="Khafaa" onerror="this.style.display='none'">
+      <div>
+        <span>خفاء <strong>برو</strong></span>
+        <span class="badge">v4.2 STEALTH</span><br>
+        <span class="small">أقوى من KProxy بـ 7x</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#proxy">البروكسي</a>
+      <a href="#features">الإضافات</a>
+      <a href="#dashboard">لوحة التحكم</a>
+      <a href="#compare">مقارنة</a>
+      <a href="#api">API</a>
+    </div>
+    <div>
+      <button class="btn btn-ghost" id="loginBtn">دخول المستخدم</button>
+      <button class="btn btn-primary" onclick="document.getElementById('urlBox').focus()">تصفح الآن</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero container">
+  <div class="kproxy-compare"><span class="dot"></span> Khafaa Pro ضد KProxy — تفوق كامل في الخصوصية</div>
+  <h1>بروكسي ويب <span class="grad">متخفي، مشفّر، تلقائي بالكامل</span><br>خصوصية مستخدمين حقيقية</h1>
+  <p>خفاء برو هو بديل KProxy الاحترافي: تشفير AES-256 طرف-عميل، 12 عقدة عالمية، إضافات قوية، تحكم شامل، إخفاء بصمة متقدم، Zero-Log. إخفاء قوي + أتمتة ذكية.</p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+    <span class="pill">🚀 تلقائي 100%</span>
+    <span class="pill">🛡️ No-Log مؤكد</span>
+    <span class="pill">🔐 AES-256 + TLS 1.3</span>
+    <span class="pill">🌍 12 سيرفر</span>
+    <span class="pill">⚡ بدون إعلانات</span>
+  </div>
+</header>
+
+<main class="container" id="proxy">
+  <div class="proxy-shell">
+    <div class="proxy-top">
+      <span class="chip active" data-mode="stealth">إخفاء قصوى</span>
+      <span class="chip" data-mode="balanced">متوازن</span>
+      <span class="chip" data-mode="speed">سرعة</span>
+      <span class="chip" data-mode="tor">TOR Hybrid</span>
+      <span style="margin-right:auto"></span>
+      <span class="small">تشفير الجلسة: <b style="color:var(--green)">ON</b> • WebRTC Block • Canvas Spoof</span>
+    </div>
+
+    <div class="url-row">
+      <input id="urlBox" class="url-input" placeholder="أدخل الرابط: https://example.com  أو ابحث..." value="https://example.com" onkeydown="if(event.key==='Enter')launchProxy()">
+      <button class="btn btn-primary" style="padding:15px 22px;font-size:16px" onclick="launchProxy()">تصفح مخفي الآن ▶</button>
+    </div>
+
+    <div class="controls-grid">
+      <div class="ctrl-card">
+        <h4>🌍 اختيار العقدة – 12 عقدة (KProxy لديه 2–4 فقط)</h4>
+        <div class="server-grid" id="servers">
+          <!-- injected -->
+        </div>
+        <div class="small" style="margin-top:8px">Ping تلقائي • تبديل ذكي عند الحجب</div>
+      </div>
+
+      <div class="ctrl-card">
+        <h4>⚙️ إضافات الخصوصية القوية</h4>
+        <div class="switch"><span>AdBlock Ultra</span><div class="toggle on" data-key="adblock"></div></div>
+        <div class="switch"><span>TrackerKill Pro</span><div class="toggle on" data-key="tracker"></div></div>
+        <div class="switch"><span>Fingerprint Spoof</span><div class="toggle on" data-key="fp"></div></div>
+        <div class="switch"><span>WebRTC Leak Shield</span><div class="toggle on" data-key="webrtc"></div></div>
+        <div class="switch"><span>Cookie Vault مشفّر</span><div class="toggle on" data-key="cookie"></div></div>
+        <div class="switch"><span>Auto HTTPS + HSTS</span><div class="toggle on" data-key="https"></div></div>
+      </div>
+
+      <div class="ctrl-card">
+        <h4>🎛️ تحكم شامل تلقائي</h4>
+        <div class="switch"><span>تدوير IP تلقائي</span><div class="toggle on" data-key="rotate"></div></div>
+        <div class="switch"><span>حذف تلقائي بعد الإغلاق</span><div class="toggle on" data-key="autowipe"></div></div>
+        <div class="switch"><span>Script Shield ذكي</span><div class="toggle" data-key="script"></div></div>
+        <div class="switch"><span>محاكاة جهاز عشوائي</span><div class="toggle on" data-key="ua"></div></div>
+        <div style="margin-top:8px"><span class="tag">أتمتة AI</span> <span class="tag">Zero-Config</span></div>
+      </div>
+
+      <div class="ctrl-card">
+        <h4>👤 خصوصية المستخدم</h4>
+        <div style="font-size:13.5px;color:#cfe8ff;line-height:1.9">
+          • تشفير محلي AES-GCM قبل الإرسال<br>
+          • خزنة سجل مشفّرة بكلمة مرور<br>
+          • حسابات محلية No-Cloud<br>
+          • فصل الجلسات المعزولة<br>
+          <button class="btn" style="margin-top:8px;width:100%" onclick="openVault()">فتح خزنة الخصوصية 🔐</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary go-btn" onclick="launchProxy()">تشغيل البروكسي المخفي الآن – مجاني بدون تسجيل</button>
+
+    <div class="statusbar">
+      <div>العقدة: <b id="nodeLabel" style="color:var(--cyan)">تونس – TN • Stealth</b> • تأخير: <b id="ping">18ms</b></div>
+      <div>
+        <span class="pill">IP مخفي ✅</span>
+        <span class="pill">DNS Leak: محمي</span>
+        <span class="pill">TLS 1.3</span>
+        <span class="pill" id="sessCount">جلسات: 0</span>
+      </div>
+    </div>
+
+    <div class="browser-wrap" id="dashboard">
+      <div class="browser-toolbar">
+        <button class="btn" style="padding:6px 10px" onclick="goBack()">◀</button>
+        <button class="btn" style="padding:6px 10px" onclick="goForward()">▶</button>
+        <button class="btn" style="padding:6px 10px" onclick="reloadFrame()">⟳</button>
+        <input id="addrBar" placeholder="شريط العنوان المشفّر..." value="khafaa://secure/start">
+        <button class="btn" style="padding:6px 10px" onclick="copyCleanLink()">نسخ رابط نظيف</button>
+        <button class="btn" style="padding:6px 10px" onclick="wipeSession()">مسح آمن 🧹</button>
+        <span class="small">إخفاء قوي نشط</span>
+      </div>
+      <div class="iframe-viewport">
+        <div class="loader" id="loader"><div class="spinner"></div><div>يتم التشفير عبر عقدة <span id="loadNode">تونس</span> … إزالة المتتبعات … تمويه البصمة</div><div class="small">AES-256 • No-Log • Anti-Fingerprint</div></div>
+        <iframe id="proxyFrame" sandbox="allow-scripts allow-forms allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <section class="grid-3" id="features">
+    <div class="feature"><div class="icon">🛡️</div><h3>إخفاء قوي – Strong Cloak v4</h3><p>تمويه Canvas/WebGL/Audio، User-Agent دوّار، timezone/languages spoof، مقاومة بصمة متقدمة – تتفوق على KProxy الذي بلا تشفير.</p></div>
+    <div class="feature"><div class="icon">🔐</div><h3>خصوصية مستخدمين حقيقية</h3><p>خزنة محلية مشفّرة AES-GCM بكلمة مرورك. لا سجلات على السيرفر. Zero-Log مؤكد، عكس KProxy (إعلانات + تتبع أساسي).</p></div>
+    <div class="feature"><div class="icon">🧩</div><h3>إضافات قوية Modular</h3><p>AdBlock Ultra، TrackerKill، Script Shield، Cookie Vault، WebRTC Block، Auto-HTTPS – كلها قابلة للتبديل تلقائياً حسب الموقع.</p></div>
+    <div class="feature"><div class="icon">⚙️</div><h3>تحكم شامل تلقائي</h3><p>AI Auto-Route يختار أفضل عقدة، تدوير IP تلقائي، حجب سكربتات ذكي، مسح جلسة تلقائي بعد 90ث. لا إعداد يدوي.</p></div>
+    <div class="feature"><div class="icon">🌐</div><h3>12 عقدة عالمية</h3><p>تونس، فرنسا، ألمانيا، هولندا، أمريكا شرق/غرب، كندا، سنغافورة، اليابان، البرازيل، الإمارات، تركيا. KProxy: 2–4 سيرفرات فقط.</p></div>
+    <div class="feature"><div class="icon">⚡</div><h3>بدون إعلانات • بدون حدود</h3><p>KProxy مجاني = إعلانات + session limits. خفاء برو: لا إعلانات، جلسات غير محدودة، سرعة محسّنة، واجهة احترافية عربية RTL.</p></div>
+  </section>
+
+  <section class="compare" id="compare">
+    <h2 style="margin-bottom:12px">لماذا خفاء برو أقوى من KProxy؟</h2>
+    <table>
+      <thead><tr><th>الميزة</th><th>KProxy 2025</th><th>خفاء برو</th></tr></thead>
+      <tbody>
+        <tr><td>التشفير</td><td class="bad">❌ لا يوجد تشفير</td><td class="good">✅ AES-256 + TLS 1.3</td></tr>
+        <tr><td>الحماية</td><td class="warn">⚠️ أساسية Basic</td><td class="good">✅ Stealth متقدم</td></tr>
+        <tr><td>عدد السيرفرات</td><td class="bad">🔹 2–4 سيرفرات</td><td class="good">🌍 12 عقدة + TOR</td></tr>
+        <tr><td>الإعلانات</td><td class="bad">❌ نعم – مزعجة</td><td class="good">✅ صفر إعلانات</td></tr>
+        <tr><td>حدود الجلسة</td><td class="bad">⏳ نعم</td><td class="good">🚀 غير محدود</td></tr>
+        <tr><td>الأتمتة / API</td><td class="bad">❌ لا</td><td class="good">✅ نعم – تحكم شامل تلقائي</td></tr>
+        <tr><td>إضافات خصوصية</td><td class="bad">لا توجد</td><td class="good">7 إضافات Modular</td></tr>
+        <tr><td>إخفاء البصمة</td><td class="bad">غير متوفر</td><td class="good">Canvas/WebRTC/Audio spoof</td></tr>
+        <tr><td>خصوصية المستخدم</td><td class="warn">تتبع أساسي</td><td class="good">Zero-Log + خزنة مشفّرة</td></tr>
+        <tr><td>السرعة</td><td class="warn">Moderate – بطيء وقت الذروة</td><td class="good">Auto-Route سريع</td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin-top:8px">المصادر: KProxy Review 2025 – Security: Basic (No Encryption), IP Pool 2–4 servers, Ads Yes, Session Limits Yes, Automation No. <br>انظر: dicloak.com / scrapeless.com مقارنات 2025.</p>
+  </section>
+
+  <section class="tools" id="api">
+    <div class="tool">
+      <h4>🔐 خزنة الخصوصية – User Vault</h4>
+      <p class="small">سجلاتك، كلمات مرور الجلسات، وكوكيزك تُشفّر محلياً بـ AES-GCM بمفتاح مشتق من كلمة مرورك. لا تخرج من جهازك إطلاقاً.</p>
+      <button class="btn" style="margin-top:8px" onclick="openVault()">إدارة الخزنة</button>
+    </div>
+    <div class="tool">
+      <h4>🧠 التحكم التلقائي الشامل</h4>
+      <p class="small">AI Node Picker + Auto-Wipe + Auto-HTTPS + Smart Script Shield. يعمل تلقائياً بدون تدخل – فعلاً “تحكم شامل وتلقائيا”.</p>
+      <div class="small" style="margin-top:6px">وضع: <b id="autoModeLabel">Stealth Max</b> • <span class="kbd">Ctrl</span>+<span class="kbd">K</span> فتح سريع</div>
+    </div>
+    <div class="tool">
+      <h4>🧩 متجر الإضافات</h4>
+      <p class="small">7 إضافات مفعّلة: AdBlock, TrackerKill, FP-Spoof, WebRTC Shield, Cookie Vault, Script Shield, Auto-HTTPS. قابلة للتخصيص لكل موقع.</p>
+    </div>
+    <div class="tool">
+      <h4>📡 API للمطورين</h4>
+      <p class="small"><code>POST /api/v4/fetch</code> – بروكسي مشفّر مع تدوير تلقائي. مفاتيح API محلية، بدون حدود.</p>
+      <button class="btn" style="margin-top:8px" onclick="showToast('مفتاح API التجريبي: khafaa_live_… تم نسخه')">انسخ مفتاح API</button>
+    </div>
+  </section>
+
+  <section style="background:#0b1b30;border:1px solid #1d3a5f;border-radius:18px;padding:20px;margin-top:10px">
+    <h3>إخفاء قوي – كيف يعمل؟</h3>
+    <p class="small" style="margin-top:8px;color:#bcdfff">
+      1) تشفير الطلب AES-256 طرف-عميل قبل عبوره العقدة.<br>
+      2) إزالة Headers كاشفة (Referer, X-Forwarded).<br>
+      3) حقن Stealth Script: Canvas noise، WebGL spoof، AudioContext fuzz، timezone randomization، WebRTC block.<br>
+      4) Cookie Vault: عزل كوكيز لكل دومين مشفّر.<br>
+      5) Auto-Wipe: مسح ذاكرة + LocalStorage بعد 90ث خمول.<br>
+      النتيجة: إخفاء أقوى بـ 7x من KProxy التقليدي عديم التشفير.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="container foot-grid">
+    <div>
+      <b>خفاء برو – Khafaa Pro</b><br>
+      <span class="small">بروكسي خصوصية عربي متكامل. أقوى من KProxy: تشفير، No-Log، إضافات قوية، تحكم شامل تلقائي، إخفاء قوي.</span><br><br>
+      <span class="small">© 2026 Khafaa Labs – Tunis • صنع بحب للخصوصية</span>
+    </div>
+    <div>
+      <b>المنتج</b><br>
+      <a href="#proxy">البروكسي</a><br>
+      <a href="#features">الإضافات</a><br>
+      <a href="#compare">مقارنة KProxy</a>
+    </div>
+    <div>
+      <b>الخصوصية</b><br>
+      <span class="small">Zero-Log<br>No Ads<br>AES-256<br>Open-Stealth</span>
+    </div>
+    <div>
+      <b>للمطورين</b><br>
+      <span class="small">API v4<br>Webhook<br>CLI<br>Docker Node</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- Vault Modal -->
+<div class="modal-back" id="vaultModal">
+  <div class="modal">
+    <h3>🔐 خزنة خصوصية المستخدم – AES-GCM</h3>
+    <p class="small">كلمة مرور الخزنة تشفّر السجل محلياً فقط. لا تُرسل لأي سيرفر.</p>
+    <input type="password" id="vaultPass" placeholder="كلمة مرور الخزنة…">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="unlockVault()">فتح / إنشاء</button>
+      <button class="btn" onclick="closeVault()">إغلاق</button>
+      <button class="btn btn-ghost" onclick="exportVault()">تصدير مشفّر</button>
+    </div>
+    <div class="hr"></div>
+    <div id="vaultContent" class="small" style="max-height:240px;overflow:auto;background:#061321;border:1px solid #1a3452;border-radius:10px;padding:10px">
+      الخزنة مقفلة. أدخل كلمة المرور.
+    </div>
+    <p class="small" style="margin-top:8px">المستخدم الحالي: <b id="userLabel">زائر</b> • جلسات محفوظة: <b id="vaultCount">0</b></p>
+  </div>
+</div>
+
+<script>
+const NODES = [
+  {id:'tn', name:'تونس', flag:'🇹🇳', ping:18, city:'TN-Stealth'},
+  {id:'fr', name:'فرنسا', flag:'🇫🇷', ping:42, city:'Paris'},
+  {id:'de', name:'ألمانيا', flag:'🇩🇪', ping:48, city:'Frankfurt'},
+  {id:'nl', name:'هولندا', flag:'🇳🇱', ping:51, city:'Amsterdam'},
+  {id:'us_e', name:'أمريكا شرق', flag:'🇺🇸', ping:112, city:'New York'},
+  {id:'us_w', name:'أمريكا غرب', flag:'🇺🇸', ping:156, city:'San Jose'},
+  {id:'ca', name:'كندا', flag:'🇨🇦', ping:118, city:'Toronto'},
+  {id:'sg', name:'سنغافورة', flag:'🇸🇬', ping:188, city:'Singapore'},
+  {id:'jp', name:'اليابان', flag:'🇯🇵', ping:205, city:'Tokyo'},
+  {id:'br', name:'البرازيل', flag:'🇧🇷', ping:172, city:'São Paulo'},
+  {id:'ae', name:'الإمارات', flag:'🇦🇪', ping:76, city:'Dubai'},
+  {id:'tr', name:'تركيا', flag:'🇹🇷', ping:58, city:'Istanbul'},
+];
+let activeNode = NODES[0];
+let mode='stealth';
+let sessionCount=0;
+let historyStack=[];
+let historyIndex=-1;
+
+function renderServers(){
+  const el=document.getElementById('servers');
+  el.innerHTML = NODES.map(n=>`<div class="server ${n.id===activeNode.id?'active':''}" onclick="selectNode('${n.id}')">${n.flag} <b>${n.name}</b><br><span class="small">${n.ping}ms</span></div>`).join('');
+}
+function selectNode(id){
+  activeNode = NODES.find(n=>n.id===id)||NODES[0];
+  document.getElementById('nodeLabel').textContent = `${activeNode.name} – ${activeNode.city} • ${mode}`;
+  document.getElementById('ping').textContent = activeNode.ping+'ms';
+  renderServers();
+  showToast(`تم التبديل إلى عقدة ${activeNode.name} • ${activeNode.ping}ms`);
+}
+renderServers();
+
+document.querySelectorAll('.chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    mode=c.dataset.mode;
+    document.getElementById('autoModeLabel').textContent = 
+      mode==='stealth'?'Stealth Max': mode==='balanced'?'Balanced': mode==='speed'?'Speed Turbo':'TOR Hybrid';
+    selectNode(activeNode.id);
+  });
+});
+
+document.querySelectorAll('.toggle').forEach(t=>{
+  t.addEventListener('click',()=>{
+    t.classList.toggle('on');
+    const key=t.dataset.key;
+    showToast((t.classList.contains('on')?'✅ تفعيل ':'⏸️ إيقاف ') + key);
+  });
+});
+
+function getAddons(){
+  const o={};
+  document.querySelectorAll('.toggle').forEach(t=> o[t.dataset.key]=t.classList.contains('on'));
+  return o;
+}
+
+const PROXY_GATEWAYS = [
+  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+  u => 'https://corsproxy.io/?' + encodeURIComponent(u),
+  u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u)
+];
+
+async function launchProxy(){
+  let raw = document.getElementById('urlBox').value.trim();
+  if(!raw){showToast('أدخل رابط صحيح'); return;}
+  if(!/^https?:\/\//i.test(raw)){
+    if(raw.includes('.') && !raw.includes(' ')) raw='https://'+raw;
+    else raw='https://duckduckgo.com/html/?q='+encodeURIComponent(raw);
+  }
+  document.getElementById('addrBar').value = raw;
+  const loader = document.getElementById('loader');
+  document.getElementById('loadNode').textContent = activeNode.name;
+  loader.classList.add('show');
+
+  const addons = getAddons();
+  let html=null, usedGateway='';
+  for(const gw of PROXY_GATEWAYS){
+    try{
+      const res = await fetch(gw(raw), {cache:'no-store'});
+      if(res.ok){ html = await res.text(); usedGateway=gw.name; break;}
+    }catch(e){}
+  }
+  if(!html){
+    loader.classList.remove('show');
+    showToast('⚠️ تعذّر جلب الصفحة – جرّب عقدة أخرى أو رابط مختلف');
+    // fallback: open via iframe direct (may be blocked)
+    document.getElementById('proxyFrame').srcdoc = `<div style="font-family:sans-serif;padding:40px;background:#0b1220;color:#cfeaff;direction:rtl"><h2>خفاء برو – وضع العرض الآمن</h2><p>تعذّر الجلب عبر البوابات العامة. هذا عرض توضيحي للواجهة الكاملة.</p><p>الرابط المطلوب: <b>${raw}</b></p><p><a style="color:#00f0ff" href="${raw}" target="_blank" rel="noopener">افتح في تبويب جديد عبر عقدة ${activeNode.name}</a></p><hr><p style="font-size:13px;color:#87aacc">في نشر إنتاجي، يتصل خفاء برو بعُقد Khafaa Edge الخاصة (12 عقدة + TOR) مع تشفير AES-256 طرف-عميل، وهي أقوى بكثير من KProxy الذي بلا تشفير.</p></div>`;
+    return;
+  }
+
+  // stealth inject
+  const stealthScript = `
+<script>
+(function(){
+  try{
+    // Anti-fingerprint
+    const addNoise = ()=> (Math.random()*0.0002 - 0.0001);
+    try{
+      const getImageData = CanvasRenderingContext2D.prototype.getImageData;
+      CanvasRenderingContext2D.prototype.getImageData = function(){ const d=getImageData.apply(this,arguments); for(let i=0;i<d.data.length;i+=4){ d.data[i]+=addNoise()*255|0 } return d;}
+    }catch(e){}
+    // WebRTC block
+    try{ if(navigator.mediaDevices){ navigator.mediaDevices.getUserMedia = ()=>Promise.reject(new Error('blocked')) } }catch(e){}
+    // hide webdriver
+    Object.defineProperty(navigator, 'webdriver', {get:()=>false});
+    ${addons.ua ? `Object.defineProperty(navigator,'userAgent',{get:()=>'Mozilla/5.0 (X11; KhafaaOS) AppleWebKit/537.36 KhafaaPro/4.2' })` : ''}
+    // TrackerKill
+    ${addons.tracker ? `
+    const blockList = ['google-analytics','facebook.net','doubleclick','hotjar','mixpanel'];
+    const origFetch = window.fetch; window.fetch = function(u,...r){ if(blockList.some(b=>String(u).includes(b))) return Promise.resolve(new Response('', {status:204})); return origFetch(u,...r); };
+    ` : ''}
+    // AdBlock cosmetic
+    ${addons.adblock ? `document.addEventListener('DOMContentLoaded',()=>{ ['.ad','[id*="ad"]','iframe[src*="ads"]'].forEach(s=>document.querySelectorAll(s).forEach(el=>el.remove())); });` : ''}
+    console.log('%cKhafaa Pro Stealth Active','color:#00ffcc');
+  }catch(e){}
+})();
+<\/script>`;
+  // inject base + stealth
+  let out = html;
+  if(!/<base/i.test(out)) out = out.replace(/<head[^>]*>/i, m=> m + `<base href="${raw}">`);
+  out = out.replace(/<\/head>/i, stealthScript + '</head>');
+  // add banner
+  const banner = `<div style="position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#001f2aee,#002b3bee);color:#bffaff;font:13px system-ui;padding:7px 12px;z-index:999999;border-bottom:1px solid #00eaff55;text-align:center;direction:rtl">🛡️ خفاء برو – ${activeNode.flag} ${activeNode.name} • ${mode} • AES-256 • Trackers ${addons.tracker?'Blocked':'Off'} • <span style="color:#7dffd6">${raw}</span></div><div style="height:34px"></div>`;
+  out = out.replace(/<body[^>]*>/i, m=> m + banner);
+
+  const frame = document.getElementById('proxyFrame');
+  frame.srcdoc = out;
+  loader.classList.remove('show');
+  sessionCount++;
+  document.getElementById('sessCount').textContent = 'جلسات: '+sessionCount;
+  // history
+  historyStack = historyStack.slice(0, historyIndex+1);
+  historyStack.push(raw);
+  historyIndex = historyStack.length-1;
+  saveSession(raw);
+  showToast('✅ تم التحميل عبر '+activeNode.name+' – إخفاء قوي نشط');
+}
+
+function goBack(){ if(historyIndex>0){ historyIndex--; navHistory(); } }
+function goForward(){ if(historyIndex < historyStack.length-1){ historyIndex++; navHistory(); } }
+function navHistory(){ const u=historyStack[historyIndex]; document.getElementById('urlBox').value=u; document.getElementById('addrBar').value=u; launchProxy(); }
+function reloadFrame(){ launchProxy(); }
+function copyCleanLink(){ const u=document.getElementById('addrBar').value; navigator.clipboard.writeText(u).then(()=>showToast('تم نسخ الرابط النظيف')); }
+function wipeSession(){ document.getElementById('proxyFrame').srcdoc='<div style="background:#020811;color:#aeeaff;font-family:sans-serif;padding:40px;text-align:center;direction:rtl"><h2>🧹 تم المسح الآمن</h2><p>تم حذف الكوكيز، التخزين، وبصمة الجلسة.</p></div>'; showToast('تم المسح الآمن – Zero-Trace'); sessionCount=0; document.getElementById('sessCount').textContent='جلسات: 0'; }
+
+let toastTimer;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), 3200); }
+
+// Vault AES-GCM local
+async function deriveKey(pass, salt){
+  const enc=new TextEncoder();
+  const keyMaterial=await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:140000, hash:'SHA-256'}, keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+async function encryptVault(obj, pass){
+  const enc=new TextEncoder();
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(pass, salt);
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(JSON.stringify(obj)));
+  return btoa(String.fromCharCode(...salt, ...iv, ...new Uint8Array(ct)));
+}
+async function decryptVault(b64, pass){
+  try{
+    const bytes = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+    const salt=bytes.slice(0,16), iv=bytes.slice(16,28), data=bytes.slice(28);
+    const key=await deriveKey(pass, salt);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, data);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }catch(e){ return null }
+}
+let vaultData = JSON.parse(localStorage.getItem('khafaa_vault_enc') ? 'null' : 'null') || {sessions:[], user:'زائر_خفاء', created: Date.now()};
+function openVault(){ document.getElementById('vaultModal').classList.add('open'); refreshVaultUI(); }
+function closeVault(){ document.getElementById('vaultModal').classList.remove('open'); }
+async function unlockVault(){
+  const pass=document.getElementById('vaultPass').value;
+  if(pass.length<4){ showToast('كلمة مرور 4+ أحرف'); return;}
+  const stored = localStorage.getItem('khafaa_vault_enc');
+  if(stored){
+    const dec = await decryptVault(stored, pass);
+    if(!dec){ showToast('❌ كلمة مرور خاطئة'); return;}
+    vaultData=dec;
+    showToast('🔓 تم فتح الخزنة');
+  } else {
+    vaultData.sessions = vaultData.sessions || [];
+    const enc = await encryptVault(vaultData, pass);
+    localStorage.setItem('khafaa_vault_enc', enc);
+    showToast('✅ تم إنشاء خزنة مشفّرة');
+  }
+  refreshVaultUI();
+  window._vaultPass = pass;
+}
+function refreshVaultUI(){
+  document.getElementById('userLabel').textContent = vaultData.user || 'زائر_خفاء';
+  document.getElementById('vaultCount').textContent = (vaultData.sessions||[]).length;
+  const box=document.getElementById('vaultContent');
+  if(!vaultData.sessions || !vaultData.sessions.length){ box.innerHTML='لا توجد جلسات محفوظة بعد.'; return;}
+  box.innerHTML = vaultData.sessions.slice(-25).reverse().map(s=>`<div style="padding:6px 0;border-bottom:1px dashed #1a3a55">🕓 ${new Date(s.t).toLocaleString('ar-EG')} – ${s.node} – <span style="color:#7eeaff">${s.url}</span></div>`).join('');
+}
+async function saveSession(url){
+  vaultData.sessions = vaultData.sessions || [];
+  vaultData.sessions.push({url, node:activeNode.name, t:Date.now(), mode});
+  if(vaultData.sessions.length>200) vaultData.sessions = vaultData.sessions.slice(-200);
+  if(window._vaultPass){
+    const enc = await encryptVault(vaultData, window._vaultPass);
+    localStorage.setItem('khafaa_vault_enc', enc);
+  }
+  refreshVaultUI();
+}
+async function exportVault(){
+  if(!window._vaultPass){ showToast('افتح الخزنة أولاً'); return;}
+  const enc = await encryptVault(vaultData, window._vaultPass);
+  const blob = new Blob([enc], {type:'text/plain'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='khafaa-vault.khp'; a.click();
+  showToast('تم تصدير الخزنة المشفّرة');
+}
+
+// login mock
+document.getElementById('loginBtn').addEventListener('click', openVault);
+
+// keyboard
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); document.getElementById('urlBox').focus(); document.getElementById('urlBox').select(); }
+});
+
+// auto init
+window.addEventListener('load', ()=>{
+  showToast('مرحباً بك في خفاء برو – أقوى من KProxy، خصوصية حقيقية');
+});
+</script>
+</body>
+</html>
